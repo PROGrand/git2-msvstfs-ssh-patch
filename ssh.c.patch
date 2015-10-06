@@ -1,0 +1,32 @@
+378a379,394
+> #ifdef _WINDOWS
+> static int cred_acquire_cb(git_cred **out,
+> 	const char * url,
+> 	const char * username_from_url,
+> 	unsigned int allowed_types,
+> 	void * payload)
+> {
+> 	char pub_path[MAX_PATH * 4], priv_path[MAX_PATH * 4];
+> 	if (!ExpandEnvironmentStringsA("%USERPROFILE%\\.ssh\\id_rsa.pub", pub_path, sizeof(pub_path) - 2) ||
+> 		!ExpandEnvironmentStringsA("%USERPROFILE%\\.ssh\\id_rsa", priv_path, sizeof(priv_path) - 2))
+> 		return GITERR_SSH;
+> 	
+> 	return git_cred_ssh_key_new(out, "git", pub_path, priv_path, "");
+> }
+> #endif //_WINDOWS.
+> 
+384c400,407
+< 	if (!t->owner->cred_acquire_cb) {
+---
+> 	git_cred_acquire_cb cb = t->owner->cred_acquire_cb;
+> 	
+> #ifdef _WINDOWS
+> 	if (!cb)
+> 		cb = cred_acquire_cb;
+> #endif //_WINDOWS.
+> 
+> 	if (!cb) {
+387c410
+< 		error = t->owner->cred_acquire_cb(&cred, t->owner->url, user, auth_methods,
+---
+> 		error = cb(&cred, t->owner->url, user, auth_methods,
