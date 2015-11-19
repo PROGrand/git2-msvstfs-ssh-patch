@@ -18,6 +18,6 @@ mkdir build && cd build
 cmake -DEMBED_SSH_PATH=C:/dev/libssh2 -DSTDCALL=ON ..
 </pre>
 
-Above instructions allows generic SSH usage, and following patching command establishes %USERPROFILE%\id_rsa file support.
+Above instructions allows generic SSH usage, and following patching command establishes %USERPROFILE%\.ssh\id_rsa file support.
 <pre>$ patch src/transports/ssh.c < ssh.c.patch
 </pre>
